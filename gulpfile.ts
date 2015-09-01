@@ -3,27 +3,16 @@
 import gulp = require('gulp');
 import typescript = require('gulp-typescript');
 import uglify = require('gulp-uglify');
+import rename = require('gulp-rename');
 
-gulp.task('common', () => {
+gulp.task('default', () => {
 
     gulp.src('src/Base.ts')
         .pipe(typescript({
             module: 'commonjs'
         }))
         .pipe(uglify())
+        .pipe(rename('Base.min.js'))
         .pipe(gulp.dest('build/'));
 
 });
-
-gulp.task('AMD', () => {
-
-    gulp.src('src/Base.ts')
-        .pipe(typescript({
-            module: 'AMD'
-        }))
-        .pipe(uglify())
-        .pipe(gulp.dest('build/'));
-
-});
-
-gulp.task('default', ['common']);

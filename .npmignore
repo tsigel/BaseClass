@@ -2,3 +2,5 @@
 .idea
 node_modules
 typings
+gulpfile.ts
+gulpfile.js.map

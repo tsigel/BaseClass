@@ -28,6 +28,9 @@
     },
     "gulp-uglify/gulp-uglify.d.ts": {
       "commit": "af76bf46025371c760d8fe8c03cf874428da6124"
+    },
+    "gulp-rename/gulp-rename.d.ts": {
+      "commit": "af76bf46025371c760d8fe8c03cf874428da6124"
     }
   }
 }

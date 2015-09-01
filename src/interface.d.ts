@@ -1,6 +1,3 @@
-/**
- * Created by daniil on 01.09.15.
- */
 declare module BaseModule {
 
     interface IBase {

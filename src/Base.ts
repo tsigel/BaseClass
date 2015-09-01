@@ -159,4 +159,13 @@ class Base implements BaseModule.IBase {
 
 }
 
-export = Base;
+declare var module:any;
+(function (root, Base) {
+    if(typeof root['define'] === "function" && root['define'].amd) {
+        root['define']([], () => Base);
+    } else if(typeof module === "object" && module.exports) {
+        module.exports = Base;
+    } else {
+        root.Base = Base;
+    }
+})(this, Base);
