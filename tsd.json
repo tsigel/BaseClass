@@ -22,6 +22,12 @@
     },
     "mocha/mocha.d.ts": {
       "commit": "af76bf46025371c760d8fe8c03cf874428da6124"
+    },
+    "gulp-typescript/gulp-typescript.d.ts": {
+      "commit": "af76bf46025371c760d8fe8c03cf874428da6124"
+    },
+    "gulp-uglify/gulp-uglify.d.ts": {
+      "commit": "af76bf46025371c760d8fe8c03cf874428da6124"
     }
   }
 }
