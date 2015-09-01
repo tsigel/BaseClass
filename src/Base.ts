@@ -166,6 +166,6 @@ declare var module:any;
     } else if(typeof module === "object" && module.exports) {
         module.exports = Base;
     } else {
-        root.Base = Base;
+        root['Base'] = Base;
     }
 })(this, Base);
