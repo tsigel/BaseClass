@@ -2,9 +2,9 @@
   "name": "ts-base-class",
   "version": "1.0.0",
   "description": "base class to exntends",
-  "main": "gulpfile.js",
+  "main": "build/Base.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
