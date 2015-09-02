@@ -107,6 +107,14 @@ class Base implements BaseModule.IBase {
         return this.hasState('loaded');
     }
 
+    public onReady(callback:BaseModule.Callback):BaseModule.IBase {
+        return this.onState('ready', callback);
+    }
+
+    public ready():BaseModule.IBase {
+        return this.setState('ready');
+    }
+
     public hasState(state:string):boolean {
         return this.states[state] && typeof this.states[state] == 'boolean';
     }

@@ -13,6 +13,8 @@ declare module BaseModule {
 
         onLoad(callback:Callback):IBase;
         loaded():IBase;
+        onReady(callback:Callback):IBase;
+        ready():IBase;
 
         onState(state:string, callback:Callback):IBase;
         setState(state:string):IBase;
