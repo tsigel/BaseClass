@@ -46,3 +46,26 @@ declare module BaseModule {
     }
 
 }
+
+declare class Base implements BaseModule.IBase {
+    on(eventName:string, handler:BaseModule.IHandler, context?:any):BaseModule.IBase;
+    once(eventName:string, handler:BaseModule.IHandler, context?:any):BaseModule.IBase;
+    off(eventName?:string, handler?:BaseModule.IHandler):BaseModule.IBase;
+
+    listenTo(target:BaseModule.IBase, eventName:string, handler:BaseModule.IHandler, context?:any):BaseModule.IBase;
+    listenToOnce(target:BaseModule.IBase, eventName:string, handler:BaseModule.IHandler, context?:any):BaseModule.IBase;
+    stopListening(target?:BaseModule.IBase, eventName?:string, handler?:BaseModule.IHandler):BaseModule.IBase;
+
+    trigger(eventName:string, args:Array<any>):BaseModule.IBase;
+
+    onLoad(callback:BaseModule.Callback):BaseModule.IBase;
+    loaded():BaseModule.IBase;
+    onReady(callback:BaseModule.Callback):BaseModule.IBase;
+    ready():BaseModule.IBase;
+
+    onState(state:string, callback:BaseModule.Callback):BaseModule.IBase;
+    setState(state:string):BaseModule.IBase;
+
+    hasState(state:string):boolean;
+    isLoaded():boolean;
+}
