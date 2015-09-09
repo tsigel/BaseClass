@@ -61,11 +61,9 @@ class Base implements BaseModule.IBase {
     }
 
     public trigger(eventName:string, args?:Array<any>):BaseModule.IBase {
-        args = args || [];
-        var events = Base.splitEventName(eventName);
-        events.forEach((eventString:string, i:number) => {
+        Base.splitEventName(eventName).forEach((eventString:string, i:number) => {
             if (eventString in this.events) {
-                var args = events.slice(0, i).concat(args);
+                var args = Base.getEventsArgs(eventName, i).concat(args || []);
                 this.events[eventString].forEach((handlerData:BaseModule.HandlerData) => {
                     handlerData.handler.apply(handlerData.context, args);
                 });
@@ -163,6 +161,10 @@ class Base implements BaseModule.IBase {
             result.push(result[result.length - 1] + ":" + word);
             return result;
         }, result);
+    }
+
+    private static getEventsArgs(event:string, index:number):Array<string> {
+        return  event.split(":").slice(index + 1);
     }
 
 }

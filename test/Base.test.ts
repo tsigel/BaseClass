@@ -1,6 +1,11 @@
 /// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../src/interface.d.ts" />
 
-import Base = require('../src/Base');
+interface IBaseClass {
+    new ():BaseModule.IBase;
+}
+
+var Base:IBaseClass = require('../src/Base');
 import expect = require('expect.js');
 
 describe('base', () => {
@@ -47,15 +52,20 @@ describe('base', () => {
     it('trigger name space', () => {
 
         var base = new Base();
+        var hasNames = false;
         var ok = 0;
-        base.on('User', () => {
+        base.on('User', function() {
             ok++;
+            if (arguments.length == 1 && arguments[0] == "change") {
+                hasNames = true;
+            }
         });
         base.on('User:change', () => {
             ok++;
         });
         base.trigger('User:change');
         expect(ok).to.be(2);
+        expect(hasNames).to.be(true);
 
     });
 

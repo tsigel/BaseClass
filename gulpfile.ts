@@ -3,7 +3,6 @@
 import gulp = require('gulp');
 import typescript = require('gulp-typescript');
 import uglify = require('gulp-uglify');
-import obfuscate = require('gulp-obfuscate');
 import rename = require('gulp-rename');
 
 gulp.task('default', () => {

@@ -2,7 +2,7 @@
   "name": "ts-base-class",
   "version": "1.0.1",
   "description": "base class to exntends",
-  "main": "build/Base.js",
+  "main": "build/Base.min.js",
   "scripts": {
     "test": "mocha"
   },
