@@ -63,9 +63,9 @@ class Base implements BaseModule.IBase {
     public trigger(eventName:string, args?:Array<any>):BaseModule.IBase {
         Base.splitEventName(eventName).forEach((eventString:string, i:number) => {
             if (eventString in this.events) {
-                var args = Base.getEventsArgs(eventName, i).concat(args || []);
+                var localArgs = Base.getEventsArgs(eventName, i).concat(args || []);
                 this.events[eventString].forEach((handlerData:BaseModule.HandlerData) => {
-                    handlerData.handler.apply(handlerData.context, args);
+                    handlerData.handler.apply(handlerData.context, localArgs.slice());
                 });
             }
         });

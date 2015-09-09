@@ -54,7 +54,7 @@ describe('base', () => {
         var base = new Base();
         var hasNames = false;
         var ok = 0;
-        base.on('User', function() {
+        base.on('User', function () {
             ok++;
             if (arguments.length == 1 && arguments[0] == "change") {
                 hasNames = true;
@@ -66,6 +66,20 @@ describe('base', () => {
         base.trigger('User:change');
         expect(ok).to.be(2);
         expect(hasNames).to.be(true);
+
+    });
+
+    it('trigger arguments', () => {
+
+        var base = new Base();
+        var ok = false;
+        base.on('User:change', (some) => {
+            if (some) {
+                ok = true;
+            }
+        });
+        base.trigger('User:change', [true]);
+        expect(ok).to.be(true);
 
     });
 

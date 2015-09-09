@@ -1,6 +1,6 @@
 {
   "name": "ts-base-class",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "base class to exntends",
   "main": "build/Base.min.js",
   "scripts": {
