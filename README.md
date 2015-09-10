@@ -42,6 +42,18 @@ Methods
 
 **on(eventName, handler, [context])
 
+### once()
+
+**once(eventName, handler, [context])
+
+### off()
+
+**off([eventName], [handler])
+
+### listenTo()
+
+**listenTo(toListen, eventName, handler, [context])
+
 ------------
 ###Version: 1.0.4
 ------------
