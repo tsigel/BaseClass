@@ -55,7 +55,7 @@ Methods
 **listenTo(toListen, eventName, handler, [context])
 
 ------------
-###Version: 1.0.4
+###Version: 1.0.5
 ------------
 License
 -------
