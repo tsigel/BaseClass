@@ -5,7 +5,7 @@ interface IBaseClass {
     new ():BaseModule.IBase;
 }
 
-var Base:IBaseClass = require('../src/Base');
+var Base:IBaseClass = require('../build/Base.min');
 import expect = require('expect.js');
 
 describe('base', () => {

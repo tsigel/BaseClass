@@ -141,7 +141,7 @@ class Base implements BaseModule.IBase {
     private filterEvent(eventKey, eventName:string, handler?:BaseModule.IHandler, callback?:(handlerData:BaseModule.HandlerData, eventName:string)=>void, target?:BaseModule.IBase):void {
         if (this[eventKey][eventName]) {
             this[eventKey][eventName] = this[eventKey][eventName].filter((handlerData:BaseModule.HandlerData) => {
-                var needRemove = (!target && (!handler || handler == handlerData.handler)) || ((target == handlerData.listenTo) && (!handler || handler == handlerData.handler));
+                var needRemove = Base.isNeedRemove(target, handler, handlerData);
                 if (callback && needRemove) {
                     callback(handlerData, eventName);
                 }
@@ -152,6 +152,18 @@ class Base implements BaseModule.IBase {
 
     private static removeCallback(handlerData:BaseModule.HandlerData, evenName:string):void {
         handlerData.listenTo.off(evenName, handlerData.handler);
+    }
+
+    private static isNeedRemove(target:BaseModule.IBase, handler:BaseModule.IHandler, handlerData:BaseModule.HandlerData):boolean {
+        if (target) {
+            return target == handlerData.listenTo && (!handler || this.isRemoveByHandler(handler, handlerData));
+        } else {
+            return (!handler || this.isRemoveByHandler(handler, handlerData));
+        }
+    }
+
+    private static isRemoveByHandler(handler:BaseModule.IHandler, handlerData:BaseModule.HandlerData):boolean {
+        return handler == handlerData.handler;
     }
 
     private static splitEventName(eventName:string):Array<string> {

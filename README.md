@@ -4,8 +4,21 @@ BaseClass to extend
 Installation
 ------------
 
-    npm install --save fs-extra
+    npm install ts-base-class --save
 
+------------
+
+####For configure project:
+
+    npm install typescript -g
+    npm install tsd -g
+    npm run init 
+
+------------
+
+####For start test: 
+
+    npm run test
 
 Methods
 -------
@@ -29,6 +42,9 @@ Methods
 
 **on(eventName, handler, [context])
 
+------------
+###Version: 1.0.4
+------------
 License
 -------
 
