@@ -64,7 +64,7 @@ class Base implements BaseModule.IBase {
         Base.splitEventName(eventName).forEach((eventString:string, i:number) => {
             if (eventString in this.events) {
                 var localArgs = Base.getEventsArgs(eventName, i).concat(args || []);
-                this.events[eventString].forEach((handlerData:BaseModule.HandlerData) => {
+                this.events[eventString].slice().forEach((handlerData:BaseModule.HandlerData) => {
                     handlerData.handler.apply(handlerData.context, localArgs.slice());
                 });
             }
