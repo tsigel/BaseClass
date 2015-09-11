@@ -42,22 +42,23 @@ Methods
 - [hasState](#hasState)
 - [isLoaded](#isLoaded)
 
-### on()
 
-**on(eventName, handler, [context])
 
-### once()
-
-**once(eventName, handler, [context])
-
-### off()
-
-**off([eventName], [handler])
-
-### listenTo()
-
-**listenTo(toListen, eventName, handler, [context])
-
+* on(eventName:string, handler:IHandler, context?:any):Base;
+* once(eventName:string, handler:IHandler, context?:any):Base;
+* off(eventName?:string, handler?:IHandler):Base;
+* listenTo(target:Base, eventName:string, handler:IHandler, context?:any):Base;
+* listenToOnce(target:Base, eventName:string, handler:IHandler, context?:any):Base;
+* stopListening(target?:Base, eventName?:string, handler?:IHandler):Base;
+* trigger(eventName:string, args?:Array<any>):Base;
+* onLoad(callback:Callback):Base;
+* loaded():Base;
+* onReady(callback:Callback):Base;
+* ready():Base;
+* onState(state:string, callback:Callback):Base;
+* setState(state:string):Base;
+* hasState(state:string):boolean;
+* isLoaded():boolean;
 
 -----------
 ### Example
@@ -86,6 +87,16 @@ Methods
      $class.trigger("Some:change", [1]);
      
 
+If u use AMD, u need configure path:
+
+```javascript
+     requirejs.config({
+        paths: {
+            "ts-base-class": "ROOT/node_modules/ts-base-class/build/Base.min.js"
+        }
+     });
+```
+    
 ------------
 ### Version: 1.0.8
 ------------
