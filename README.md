@@ -1,5 +1,5 @@
 # BaseClass
-BaseClass to extend
+Base class to extend. Like backbone events.
 
 Installation
 ------------
@@ -53,6 +53,33 @@ Methods
 ### listenTo()
 
 **listenTo(toListen, eventName, handler, [context])
+
+
+-----------
+### Example
+
+     import Base = require('ts-base-class');
+     
+     class MyClass extends Base {
+        //...
+        
+     }
+     
+     var $class = new MyClass();
+     
+     $class.on("Some:change", function (arg) {
+        console.log(this instanceof MyClass); //true
+        console.log(arg); //1
+     });
+     
+     $class.on("Some", function (state:string, arg) {
+        console.log(this instanceof MyClass); //true
+        console.log(state); //"change"
+        console.log(arg); //1
+     });
+     
+     $class.trigger("Some:change", [1]);
+     
 
 ------------
 ###Version: 1.0.5
