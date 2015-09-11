@@ -12,7 +12,7 @@ Installation
 
     <reference path="PATH-TO-ROOT/node_modules/ts-base-class/src/interface.d.ts">
 
-####For configure project:
+#### For configure project:
 
     npm install typescript -g
     npm install tsd -g
@@ -20,7 +20,7 @@ Installation
 
 ------------
 
-####For start test: 
+#### For start test: 
 
     npm run test
 
@@ -87,7 +87,7 @@ Methods
      
 
 ------------
-### Version: 1.0.7
+### Version: 1.0.8
 ------------
 License
 -------
