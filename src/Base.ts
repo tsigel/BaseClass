@@ -1,28 +1,28 @@
 /// <reference path="./interface.d.ts" />
 
-class Base implements BaseModule.IBase {
+class Base implements IBase {
 
-    private events:BaseModule.Events;
-    private outEvents:BaseModule.Events;
-    private states:BaseModule.States;
+    private events:Events = {};
+    private outEvents:Events;
+    private states:States;
 
-    public on(eventName:string, handler:BaseModule.IHandler, context?:any):BaseModule.IBase {
+    public on(eventName:string, handler:IHandler, context?:any):IBase {
         this.checkEventKey('events', eventName);
         this.addEvent('events', eventName, handler, context || this);
         return this;
     }
 
-    public once(eventName:string, handler:BaseModule.IHandler, context?:any):BaseModule.IBase {
+    public once(eventName:string, handler:IHandler, context?:any):IBase {
         this.checkEventKey('events', eventName);
         var self = this;
         this.addEvent('events', eventName,  function() {
             handler.apply(context || this, Array.prototype.slice.call(arguments));
-            self.off(eventName, <BaseModule.IHandler>arguments.callee);
+            self.off(eventName, <IHandler>arguments.callee);
         }, this);
         return this;
     }
 
-    public off(eventName?:string, handler?:BaseModule.IHandler):BaseModule.IBase {
+    public off(eventName?:string, handler?:IHandler):IBase {
         if (!eventName) {
             this.events = {};
             return this;
@@ -31,25 +31,25 @@ class Base implements BaseModule.IBase {
         return this;
     }
 
-    public listenTo(target:BaseModule.IBase, eventName:string, handler:BaseModule.IHandler, context?:any):BaseModule.IBase {
+    public listenTo(target:IBase, eventName:string, handler:IHandler, context?:any):IBase {
         this.checkEventKey('outEvents', eventName);
         this.addEvent('outEvents', eventName, handler, this, target);
         target.on(eventName, handler, context);
         return this;
     }
 
-    public listenToOnce(target:BaseModule.IBase, eventName:string, handler:BaseModule.IHandler, context?:any):BaseModule.IBase {
+    public listenToOnce(target:IBase, eventName:string, handler:IHandler, context?:any):IBase {
         this.checkEventKey('outEvents', eventName);
         var self = this;
         var onceHandler = function () {
             handler.apply(context || this, arguments);
-            self.stopListening(target, eventName, <BaseModule.IHandler>arguments.callee);
+            self.stopListening(target, eventName, <IHandler>arguments.callee);
         };
         this.listenTo(target, eventName, onceHandler);
         return this;
     }
 
-    public stopListening(target?:BaseModule.IBase, eventName?:string, handler?:BaseModule.IHandler):BaseModule.IBase {
+    public stopListening(target?:IBase, eventName?:string, handler?:IHandler):IBase {
         if (!eventName) {
             Object.keys(this.outEvents).forEach((eventName) => {
                 this.filterEvent('outEvents', eventName, handler, Base.removeCallback, target);
@@ -60,11 +60,11 @@ class Base implements BaseModule.IBase {
         return this;
     }
 
-    public trigger(eventName:string, args?:Array<any>):BaseModule.IBase {
+    public trigger(eventName:string, args?:Array<any>):IBase {
         Base.splitEventName(eventName).forEach((eventString:string, i:number) => {
             if (eventString in this.events) {
                 var localArgs = Base.getEventsArgs(eventName, i).concat(args || []);
-                this.events[eventString].slice().forEach((handlerData:BaseModule.HandlerData) => {
+                this.events[eventString].slice().forEach((handlerData:HandlerData) => {
                     handlerData.handler.apply(handlerData.context, localArgs.slice());
                 });
             }
@@ -72,20 +72,20 @@ class Base implements BaseModule.IBase {
         return this;
     }
 
-    public onState(state:string, callback:BaseModule.Callback):BaseModule.IBase {
+    public onState(state:string, callback:Callback):IBase {
         this.checkStateKey(state);
         if (this.hasState(state)) {
             callback();
         } else {
-            (<Array<BaseModule.Callback>>this.states[state]).push(callback);
+            (<Array<Callback>>this.states[state]).push(callback);
         }
         return this;
     }
 
-    public setState(state:string):BaseModule.IBase {
+    public setState(state:string):IBase {
         this.checkStateKey(state);
         if (!this.hasState(state) && this.states[state]) {
-            (<Array<BaseModule.Callback>>this.states[state]).forEach((callback:BaseModule.Callback) => {
+            (<Array<Callback>>this.states[state]).forEach((callback:Callback) => {
                 callback();
             });
             this.states[state] = true;
@@ -93,11 +93,11 @@ class Base implements BaseModule.IBase {
         return this;
     }
 
-    public onLoad(callback:BaseModule.Callback):BaseModule.IBase {
+    public onLoad(callback:Callback):IBase {
         return this.onState('loaded', callback);
     }
 
-    public loaded():BaseModule.IBase {
+    public loaded():IBase {
         return this.setState('loaded');
     }
 
@@ -105,11 +105,11 @@ class Base implements BaseModule.IBase {
         return this.hasState('loaded');
     }
 
-    public onReady(callback:BaseModule.Callback):BaseModule.IBase {
+    public onReady(callback:Callback):IBase {
         return this.onState('ready', callback);
     }
 
-    public ready():BaseModule.IBase {
+    public ready():IBase {
         return this.setState('ready');
     }
 
@@ -130,7 +130,7 @@ class Base implements BaseModule.IBase {
         this.checkEventKey('states', state);
     }
 
-    private addEvent(eventKey:string, eventName:string, handler:BaseModule.IHandler, context:any, listenTo?:BaseModule.IBase):void {
+    private addEvent(eventKey:string, eventName:string, handler:IHandler, context:any, listenTo?:IBase):void {
         this[eventKey][eventName].push({
             handler: handler,
             context: context,
@@ -138,9 +138,9 @@ class Base implements BaseModule.IBase {
         });
     }
 
-    private filterEvent(eventKey, eventName:string, handler?:BaseModule.IHandler, callback?:(handlerData:BaseModule.HandlerData, eventName:string)=>void, target?:BaseModule.IBase):void {
+    private filterEvent(eventKey, eventName:string, handler?:IHandler, callback?:(handlerData:HandlerData, eventName:string)=>void, target?:IBase):void {
         if (this[eventKey][eventName]) {
-            this[eventKey][eventName] = this[eventKey][eventName].filter((handlerData:BaseModule.HandlerData) => {
+            this[eventKey][eventName] = this[eventKey][eventName].filter((handlerData:HandlerData) => {
                 var needRemove = Base.isNeedRemove(target, handler, handlerData);
                 if (callback && needRemove) {
                     callback(handlerData, eventName);
@@ -150,11 +150,11 @@ class Base implements BaseModule.IBase {
         }
     }
 
-    private static removeCallback(handlerData:BaseModule.HandlerData, evenName:string):void {
+    private static removeCallback(handlerData:HandlerData, evenName:string):void {
         handlerData.listenTo.off(evenName, handlerData.handler);
     }
 
-    private static isNeedRemove(target:BaseModule.IBase, handler:BaseModule.IHandler, handlerData:BaseModule.HandlerData):boolean {
+    private static isNeedRemove(target:IBase, handler:IHandler, handlerData:HandlerData):boolean {
         if (target) {
             return target == handlerData.listenTo && (!handler || this.isRemoveByHandler(handler, handlerData));
         } else {
@@ -162,7 +162,7 @@ class Base implements BaseModule.IBase {
         }
     }
 
-    private static isRemoveByHandler(handler:BaseModule.IHandler, handlerData:BaseModule.HandlerData):boolean {
+    private static isRemoveByHandler(handler:IHandler, handlerData:HandlerData):boolean {
         return handler == handlerData.handler;
     }
 

@@ -2,7 +2,7 @@
 /// <reference path="../src/interface.d.ts" />
 
 interface IBaseClass {
-    new ():BaseModule.IBase;
+    new ():IBase;
 }
 
 var Base:IBaseClass = require('../build/Base.min');
@@ -66,6 +66,14 @@ describe('base', () => {
         base.trigger('User:change');
         expect(ok).to.be(2);
         expect(hasNames).to.be(true);
+
+    });
+
+    it('trigger whisout add', () => {
+
+        var base = new Base();
+        base.trigger('User:change', [true]);
+        expect(true).to.be(true);
 
     });
 

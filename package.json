@@ -1,6 +1,6 @@
 {
   "name": "ts-base-class",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "base class to exntends",
   "main": "build/Base.min.js",
   "scripts": {
@@ -35,6 +35,6 @@
     "gulp-typescript": "^2.8.1",
     "gulp-uglify": "^1.4.0",
     "tsd": "^0.6.4",
-    "typescript": "^1.5.3"
+    "typescript": "^1.6.2"
   }
 }
