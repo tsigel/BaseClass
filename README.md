@@ -98,7 +98,7 @@ If u use AMD, u need configure path:
 ```
     
 ------------
-### Version: 1.0.9
+### Version: 1.0.11
 ------------
 License
 -------
