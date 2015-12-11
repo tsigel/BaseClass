@@ -10,7 +10,7 @@ Installation
 
 ### Interface path
 
-    <reference path="PATH-TO-ROOT/node_modules/ts-base-class/src/interface.d.ts">
+    /// <reference path="PATH-TO-ROOT/node_modules/ts-base-class/src/interface.d.ts" />
 
 #### For configure project:
 
@@ -63,7 +63,7 @@ Methods
 -----------
 ### Example
 
-     <reference path="PATH-TO-ROOT/node_modules/ts-base-class/src/interface.d.ts">
+     /// <reference path="PATH-TO-ROOT/node_modules/ts-base-class/src/interface.d.ts" />
      import Base = require('ts-base-class');
      
      class MyClass extends Base {
@@ -103,4 +103,4 @@ If u use AMD, u need configure path:
 License
 -------
 
-Licensed under MIT
+Licensed under ISC
