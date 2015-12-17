@@ -1,6 +1,6 @@
 {
   "name": "ts-base-class",
-  "version": "1.1.0",
+  "version": "1.0.11",
   "description": "base class to exntends",
   "main": "build/Base.min.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/tsigel/BaseClass.git"
   },
-  "author": "",
+  "author": "Tsigel",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/tsigel/BaseClass/issues"

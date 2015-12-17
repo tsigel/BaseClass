@@ -173,6 +173,20 @@ describe('base', () => {
             expect(ok).to.be(true);
         });
 
+        it('loaded before callback', () => {
+
+            var base = new Base();
+            var ok = false;
+
+            base.loaded();
+
+            base.onLoad(() => {
+                ok = true;
+            });
+
+            expect(ok).to.be(true);
+        });
+
         it('custom', () => {
 
             var base = new Base();
@@ -185,6 +199,21 @@ describe('base', () => {
             base.setState('some');
             expect(ok).to.be(true);
         });
+
+        it('custom before callback', () => {
+
+            var base = new Base();
+            var ok = false;
+
+            base.setState('some');
+
+            base.onState('some', () => {
+                ok = true;
+            });
+
+            expect(ok).to.be(true);
+        });
+
 
     });
 
