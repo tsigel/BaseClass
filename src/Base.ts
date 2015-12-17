@@ -3,8 +3,8 @@
 class Base implements IBase {
 
     private events:Events = {};
-    private outEvents:Events;
-    private states:States;
+    private outEvents:Events = {};
+    private states:States = {};
 
     public on(eventName:string, handler:IHandler, context?:any):IBase {
         this.checkEventKey('events', eventName);

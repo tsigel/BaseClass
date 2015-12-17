@@ -145,6 +145,21 @@ describe('base', () => {
 
     describe('states', () => {
 
+        it('isLoaded', () => {
+
+            var first = false;
+            var second = false;
+            var base = new Base();
+
+            first = !base.isLoaded();
+            base.loaded();
+            second = base.isLoaded();
+
+            expect(first).to.be(true);
+            expect(second).to.be(true);
+
+        });
+
         it('loaded', () => {
 
             var base = new Base();
