@@ -2,9 +2,9 @@ import {IBase, Events, IHandler, States, Callback, HandlerData} from './interfac
 
 export class Base implements IBase {
 
-    private events: Events;
+    private events: Events = {};
     private outEvents: Events;
-    private states: States;
+    private states: States = {};
 
 
     public on(eventName: string, handler: IHandler, context?: any): IBase {
@@ -130,7 +130,7 @@ export class Base implements IBase {
     }
 
     public hasState(state: string): boolean {
-        return this.states[state] && typeof this.states[state] === 'boolean';
+        return !!(this.states[state] && typeof this.states[state] === 'boolean');
     }
 
     private checkEventKey(eventKey: string, eventName: string): void {

@@ -1,7 +1,6 @@
 /// <reference path="../typings/tsd.d.ts" />
 /// <reference path="../src/interface.d.ts" />
 
-
 import { Base } from '../src/Base';
 /* tslint:disable */
 import expect = require('expect.js');
@@ -65,6 +64,14 @@ describe('base', () => {
         base.trigger('User:change');
         expect(ok).to.be(2);
         expect(hasNames).to.be(true);
+
+    });
+
+    it('trigger whisout add', () => {
+
+        let base = new Base();
+        base.trigger('User:change', [true]);
+        expect(true).to.be(true);
 
     });
 
@@ -135,6 +142,21 @@ describe('base', () => {
     });
 
     describe('states', () => {
+
+        it('isLoaded', () => {
+
+            let first = null;
+            let second = null;
+            let base = new Base();
+
+            first = base.isLoaded();
+            base.loaded();
+            second = base.isLoaded();
+
+            expect(first).to.be(false);
+            expect(second).to.be(true);
+
+        });
 
         it('loaded', () => {
 
