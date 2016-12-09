@@ -1,19 +1,18 @@
 /// <reference path="../typings/tsd.d.ts" />
 /// <reference path="../src/interface.d.ts" />
 
-interface IBaseClass {
-    new ():BaseModule.IBase;
-}
 
-var Base:IBaseClass = require('../build/Base.min');
+import { Base } from '../src/Base';
+/* tslint:disable */
 import expect = require('expect.js');
+/* tslint:enable */
 
 describe('base', () => {
 
     it('on', () => {
 
-        var base = new Base();
-        var ok = false;
+        let base = new Base();
+        let ok = false;
         base.on('some', () => {
             ok = true;
         });
@@ -24,8 +23,8 @@ describe('base', () => {
 
     it('off', () => {
 
-        var base = new Base();
-        var ok = 0;
+        let base = new Base();
+        let ok = 0;
         base.on('some', () => {
             ok++;
         });
@@ -38,8 +37,8 @@ describe('base', () => {
 
     it('once', () => {
 
-        var base = new Base();
-        var ok = 0;
+        let base = new Base();
+        let ok = 0;
         base.once('some', () => {
             ok++;
         });
@@ -51,12 +50,12 @@ describe('base', () => {
 
     it('trigger name space', () => {
 
-        var base = new Base();
-        var hasNames = false;
-        var ok = 0;
-        base.on('User', function () {
+        let base = new Base();
+        let hasNames = false;
+        let ok = 0;
+        base.on('User', function (): void {
             ok++;
-            if (arguments.length == 1 && arguments[0] == "change") {
+            if (arguments.length === 1 && arguments[0] === 'change') {
                 hasNames = true;
             }
         });
@@ -71,8 +70,8 @@ describe('base', () => {
 
     it('trigger arguments', () => {
 
-        var base = new Base();
-        var ok = false;
+        let base = new Base();
+        let ok = false;
         base.on('User:change', (some) => {
             if (some) {
                 ok = true;
@@ -87,9 +86,9 @@ describe('base', () => {
 
         it('listenTo', () => {
 
-            var Out = new Base();
-            var In = new Base();
-            var ok = false;
+            let Out = new Base();
+            let In = new Base();
+            let ok = false;
 
             In.listenTo(Out, 'some', () => {
                 ok = true;
@@ -102,9 +101,9 @@ describe('base', () => {
 
         it('listenToOnce', () => {
 
-            var Out = new Base();
-            var In = new Base();
-            var ok = 0;
+            let Out = new Base();
+            let In = new Base();
+            let ok = 0;
 
             In.listenToOnce(Out, 'some', () => {
                 ok++;
@@ -118,9 +117,9 @@ describe('base', () => {
 
         it('stopListening', () => {
 
-            var Out = new Base();
-            var In = new Base();
-            var ok = 0;
+            let Out = new Base();
+            let In = new Base();
+            let ok = 0;
 
             In.listenTo(Out, 'some', () => {
                 ok++;
@@ -139,8 +138,8 @@ describe('base', () => {
 
         it('loaded', () => {
 
-            var base = new Base();
-            var ok = false;
+            let base = new Base();
+            let ok = false;
 
             base.onLoad(() => {
                 ok = true;
@@ -152,8 +151,8 @@ describe('base', () => {
 
         it('loaded before callback', () => {
 
-            var base = new Base();
-            var ok = false;
+            let base = new Base();
+            let ok = false;
 
             base.loaded();
 
@@ -166,8 +165,8 @@ describe('base', () => {
 
         it('custom', () => {
 
-            var base = new Base();
-            var ok = false;
+            let base = new Base();
+            let ok = false;
 
             base.onState('some', () => {
                 ok = true;
@@ -179,8 +178,8 @@ describe('base', () => {
 
         it('custom before callback', () => {
 
-            var base = new Base();
-            var ok = false;
+            let base = new Base();
+            let ok = false;
 
             base.setState('some');
 
