@@ -10,7 +10,7 @@ Installation
 
 ### Interface path
 
-    /// <reference path="PATH-TO-ROOT/node_modules/ts-base-class/src/interface.d.ts" />
+    /// <reference types="ts-base-class" />
 
 #### For configure project:
 
@@ -63,8 +63,10 @@ Methods
 -----------
 ### Example
 
-     /// <reference path="PATH-TO-ROOT/node_modules/ts-base-class/src/interface.d.ts" />
-     import Base = require('ts-base-class');
+```typescript
+
+     /// <reference types="ts-base-class" />
+     import {Base} from 'ts-base-class';
      
      class MyClass extends Base {
         //...
@@ -85,20 +87,11 @@ Methods
      });
      
      $class.trigger("Some:change", [1]);
-     
 
-If u use AMD, u need configure path:
-
-```javascript
-     requirejs.config({
-        paths: {
-            "ts-base-class": "ROOT/node_modules/ts-base-class/build/Base.min.js"
-        }
-     });
 ```
     
 ------------
-### Version: 1.0.11
+### Version: 2.0.0
 ------------
 License
 -------
