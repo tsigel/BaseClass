@@ -1,6 +1,6 @@
 {
   "name": "ts-base-class",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "base class to exntends",
   "main": "build/Base.min.js",
   "types": "src/interface.d.ts",
