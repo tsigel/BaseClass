@@ -8,7 +8,7 @@
     "init": "npm install && tsd install && npm run compileGulp && gulp && npm run test",
     "compileGulp": "tsc gulpfile.ts --m commonjs",
     "compileTest": "tsc ./test/Base.test.ts --m commonjs",
-    "test": "npm run compileTest && mocha"
+    "test": "npm run compileTest && ./node_modules/.bin/istanbul cover _mocha"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,7 @@
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.4.0",
+    "istanbul": "^0.4.5",
     "tsd": "^0.6.4",
     "typescript": "^2.1.4"
   }
