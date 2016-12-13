@@ -5,3 +5,4 @@ typings
 .history
 **/*.js
 **/*.map
+coverage
