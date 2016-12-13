@@ -11,36 +11,23 @@ export interface IBase {
 
     trigger(eventName: string, args?: Array<any>): IBase;
 
-    onLoad(callback: Callback): IBase;
+    onLoad(callback: ICallback): IBase;
     loaded(): IBase;
-    onReady(callback: Callback): IBase;
-    ready(): IBase;
-
-    onState(state: string, callback: Callback): IBase;
-    setState(state: string): IBase;
-
-    hasState(state: string): boolean;
     isLoaded(): boolean;
-}
 
-export interface Events {
-    [key: string]: Array<HandlerData>;
-}
+    onReady(callback: ICallback): IBase;
+    ready(): IBase;
+    isReady(): boolean;
 
-export interface States {
-    [key: string]: boolean | Array<Callback>;
-}
-
-export interface HandlerData {
-    context: any;
-    handler: IHandler;
-    listenTo?: IBase;
+    onState(state: string, callback: ICallback): IBase;
+    setState(state: string): IBase;
+    hasState(state: string): boolean;
 }
 
 export interface IHandler {
-    (a?, b?, c?, d?, e?): any;
+    (...args: Array<any>): any;
 }
 
-export interface Callback {
+export interface ICallback {
     (): void;
 }

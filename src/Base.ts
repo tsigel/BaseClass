@@ -1,35 +1,45 @@
-import {IBase, Events, IHandler, States, Callback, HandlerData} from './interface';
+import { IBase, IHandler, ICallback } from './interface';
+
+
+type TPrivateKeys = '__events' | '__outEvents' | '__states';
 
 export class Base implements IBase {
 
-    private events: Events = {};
-    private outEvents: Events;
-    private states: States = {};
+    private __events: Events = {};
+    private __outEvents: Events;
+    private __states: IStates = {};
 
 
     public on(eventName: string, handler: IHandler, context?: any): IBase {
-        this.checkEventKey('events', eventName);
-        this.addEvent('events', eventName, handler, context || this);
+        this.checkEventKey('__events', eventName);
+        this.addEvent({
+            eventKey: '__events',
+            eventName: eventName,
+            handler: handler,
+            context: context || this
+        });
         return this;
     }
 
     public once(eventName: string, handler: IHandler, context?: any): IBase {
-        this.checkEventKey('events', eventName);
-        let proxyHandler = (...args: Array<any>) => {
-            handler.apply(context || this, args);
-            this.off(eventName, proxyHandler);
-        };
-        this.addEvent('events', eventName, proxyHandler, this);
+        this.checkEventKey('__events', eventName);
+        this.addEvent({
+            eventKey: '__events',
+            eventName: eventName,
+            handler: handler,
+            context: context || this,
+            isOnce: true
+        });
         return this;
     }
 
     public off(eventName?: string, handler?: IHandler): IBase {
         if (!eventName) {
-            this.events = {};
+            this.__events = {};
             return this;
         }
         this.filterEvent({
-            eventKey: 'events',
+            eventKey: '__events',
             eventName: eventName,
             handler: handler
         });
@@ -37,27 +47,42 @@ export class Base implements IBase {
     }
 
     public listenTo(target: IBase, eventName: string, handler: IHandler, context?: any): IBase {
-        this.checkEventKey('outEvents', eventName);
-        this.addEvent('outEvents', eventName, handler, this, target);
+        this.checkEventKey('__outEvents', eventName);
+        this.addEvent({
+            eventKey: '__outEvents',
+            eventName: eventName,
+            handler: handler,
+            context: context,
+            listenTo: target
+        });
         target.on(eventName, handler, context);
         return this;
     }
 
     public listenToOnce(target: IBase, eventName: string, handler: IHandler, context?: any): IBase {
-        this.checkEventKey('outEvents', eventName);
-        let onceHandler = (...args: Array<any>) => {
+        this.checkEventKey('__outEvents', eventName);
+        let proxyHandler = (...args: Array<any>) => {
             handler.apply(context || this, args);
-            this.stopListening(target, eventName, onceHandler);
+            this.stopListening(target, eventName, handler);
         };
-        this.listenTo(target, eventName, onceHandler);
+        this.addEvent({
+            eventKey: '__outEvents',
+            eventName: eventName,
+            handler: handler,
+            proxyHandler: proxyHandler,
+            context: context,
+            listenTo: target,
+            isOnce: true
+        });
+        target.once(eventName, proxyHandler, context);
         return this;
     }
 
     public stopListening(target?: IBase, eventName?: string, handler?: IHandler): IBase {
         if (!eventName) {
-            Object.keys(this.outEvents).forEach((subName: string) => {
+            Object.keys(this.__outEvents).forEach((subName: string) => {
                 this.filterEvent({
-                    eventKey: 'outEvents',
+                    eventKey: '__outEvents',
                     eventName: subName,
                     handler: handler,
                     callback: Base.removeCallback,
@@ -67,7 +92,7 @@ export class Base implements IBase {
             return this;
         }
         this.filterEvent({
-            eventKey: 'outEvents',
+            eventKey: '__outEvents',
             eventName: eventName,
             handler: handler,
             callback: Base.removeCallback,
@@ -78,38 +103,41 @@ export class Base implements IBase {
 
     public trigger(eventName: string, args?: Array<any>): IBase {
         Base.splitEventName(eventName).forEach((eventString: string, i: number) => {
-            if (eventString in this.events) {
+            if (eventString in this.__events) {
                 let localArgs = Base.getEventsArgs(eventName, i).concat(args || []);
-                this.events[eventString].slice().forEach((handlerData: HandlerData) => {
+                this.__events[eventString].slice().forEach((handlerData: IHandlerData) => {
                     handlerData.handler.apply(handlerData.context, localArgs.slice());
+                    if (handlerData.isOnce) {
+                        this.off(eventString, handlerData.handler);
+                    }
                 });
             }
         });
         return this;
     }
 
-    public onState(state: string, callback: Callback): IBase {
+    public onState(state: string, callback: ICallback): IBase {
         this.checkStateKey(state);
         if (this.hasState(state)) {
             callback();
         } else {
-            (<Array<Callback>>this.states[state]).push(callback);
+            (<Array<ICallback>>this.__states[state]).push(callback);
         }
         return this;
     }
 
     public setState(state: string): IBase {
         this.checkStateKey(state);
-        if (!this.hasState(state) && this.states[state]) {
-            (<Array<Callback>>this.states[state]).forEach((callback: Callback) => {
+        if (!this.hasState(state) && this.__states[state]) {
+            (<Array<ICallback>>this.__states[state]).forEach((callback: ICallback) => {
                 callback();
             });
-            this.states[state] = true;
+            this.__states[state] = true;
         }
         return this;
     }
 
-    public onLoad(callback: Callback): IBase {
+    public onLoad(callback: ICallback): IBase {
         return this.onState('loaded', callback);
     }
 
@@ -121,7 +149,7 @@ export class Base implements IBase {
         return this.hasState('loaded');
     }
 
-    public onReady(callback: Callback): IBase {
+    public onReady(callback: ICallback): IBase {
         return this.onState('ready', callback);
     }
 
@@ -129,11 +157,15 @@ export class Base implements IBase {
         return this.setState('ready');
     }
 
-    public hasState(state: string): boolean {
-        return !!(this.states[state] && typeof this.states[state] === 'boolean');
+    public isReady(): boolean {
+        return this.hasState('ready');
     }
 
-    private checkEventKey(eventKey: string, eventName: string): void {
+    public hasState(state: string): boolean {
+        return !!(this.__states[state] && typeof this.__states[state] === 'boolean');
+    }
+
+    private checkEventKey(eventKey: TPrivateKeys, eventName: string): void {
         if (!this[eventKey]) {
             this[eventKey] = {};
         }
@@ -143,22 +175,22 @@ export class Base implements IBase {
     }
 
     private checkStateKey(state: string): void {
-        this.checkEventKey('states', state);
+        this.checkEventKey('__states', state);
     }
 
-    private addEvent(eventKey: string, eventName: string, handler: IHandler, context: any, listenTo?: IBase): void {
-        this[eventKey][eventName].push({
-            handler: handler,
-            context: context,
-            listenTo: listenTo || null
+    private addEvent(options: IAddEventOptions): void {
+        this[options.eventKey][options.eventName].push({
+            handler: options.handler,
+            context: options.context,
+            listenTo: options.listenTo || null,
+            isOnce: options.isOnce
         });
     }
 
-    private filterEvent(options?: IFilterEventOptions): void {
-        options = options || {};
+    private filterEvent(options: IFilterEventOptions): void {
         if (this[options.eventKey][options.eventName]) {
             this[options.eventKey][options.eventName] =
-                this[options.eventKey][options.eventName].filter((handlerData: HandlerData) => {
+                this[options.eventKey][options.eventName].filter((handlerData: IHandlerData) => {
                     let needRemove = Base.isNeedRemove(options.target, options.handler, handlerData);
                     if (options.callback && needRemove) {
                         options.callback(handlerData, options.eventName);
@@ -168,11 +200,11 @@ export class Base implements IBase {
         }
     }
 
-    private static removeCallback(handlerData: HandlerData, evenName: string): void {
+    private static removeCallback(handlerData: IHandlerData, evenName: string): void {
         handlerData.listenTo.off(evenName, handlerData.handler);
     }
 
-    private static isNeedRemove(target: IBase, handler: IHandler, handlerData: HandlerData): boolean {
+    private static isNeedRemove(target: IBase, handler: IHandler, handlerData: IHandlerData): boolean {
         if (target) {
             return target === handlerData.listenTo && (!handler || this.isRemoveByHandler(handler, handlerData));
         } else {
@@ -180,8 +212,8 @@ export class Base implements IBase {
         }
     }
 
-    private static isRemoveByHandler(handler: IHandler, handlerData: HandlerData): boolean {
-        return handler === handlerData.handler;
+    private static isRemoveByHandler(handler: IHandler, handlerData: IHandlerData): boolean {
+        return handler === handlerData.handler || handler === handlerData.proxyHandler;
     }
 
     private static splitEventName(eventName: string): Array<string> {
@@ -199,14 +231,40 @@ export class Base implements IBase {
 
 }
 
+interface Events {
+    [key: string]: Array<IHandlerData>;
+}
+
 interface IFilterEventOptions {
-    eventKey?: string;
+    eventKey: TPrivateKeys;
     eventName?: string;
     handler?: IHandler;
     callback?: IFilterCallback;
     target?: IBase;
 }
 
+interface IAddEventOptions {
+    eventKey: TPrivateKeys;
+    eventName: string;
+    handler: IHandler;
+    proxyHandler?: IHandler;
+    context: any;
+    listenTo?: IBase;
+    isOnce?: boolean;
+}
+
 interface IFilterCallback {
-    (handlerData: HandlerData, eventName: string): void;
+    (handlerData: IHandlerData, eventName: string): void;
+}
+
+interface IHandlerData {
+    context: any;
+    handler: IHandler;
+    listenTo?: IBase;
+    isOnce?: boolean;
+    proxyHandler?: IHandler;
+}
+
+interface IStates {
+    [key: string]: boolean | Array<ICallback>;
 }

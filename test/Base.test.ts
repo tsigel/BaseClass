@@ -20,17 +20,71 @@ describe('base', () => {
 
     });
 
-    it('off', () => {
+    describe('off', () => {
 
-        let base = new Base();
-        let ok = 0;
-        base.on('some', () => {
-            ok++;
+        it('off fake event', () => { 
+            let base = new Base();
+            base.off('some');
         });
-        base.trigger('some');
-        base.off('some');
-        base.trigger('some');
-        expect(ok).to.be(1);
+
+        it('off by callback', () => {
+
+            let base = new Base();
+            let c1 = 0;
+            let c2 = 0;
+            let h1 = () => c1++;
+            let h2 = () => c2++;
+
+            base.on('some', h1);
+            base.on('some', h2);
+
+            base.trigger('some');
+            base.off('some', h1);
+            base.trigger('some');
+            expect(c1).to.be(1);
+            expect(c2).to.be(2);
+
+        });
+
+        it('off by eventName', () => {
+
+            let base = new Base();
+            let c1 = 0;
+            let c2 = 0;
+            let h1 = () => c1++;
+            let h2 = () => c2++;
+
+            base.on('some', h1);
+            base.on('some', h2);
+
+            base.trigger('some');
+            base.off('some');
+            base.trigger('some');
+            expect(c1).to.be(1);
+            expect(c2).to.be(1);
+
+        });
+
+        it('off all', () => {
+
+            let base = new Base();
+            let c1 = 0;
+            let c2 = 0;
+            let h1 = () => c1++;
+            let h2 = () => c2++;
+
+            base.on('some1', h1);
+            base.on('some2', h2);
+
+            base.trigger('some1');
+            base.trigger('some2');
+            base.off();
+            base.trigger('some1');
+            base.trigger('some2');
+            expect(c1).to.be(1);
+            expect(c2).to.be(1);
+
+        });
 
     });
 
@@ -44,6 +98,21 @@ describe('base', () => {
         base.trigger('some');
         base.trigger('some');
         expect(ok).to.be(1);
+
+    });
+
+    it('off once', () => {
+
+        let base = new Base();
+        let ok = true;
+        let handler = () => {
+            ok = false;
+        };
+        base.once('some', handler);
+        base.off('some', handler);
+        base.trigger('some');
+        base.trigger('some');
+        expect(ok).to.be(true);
 
     });
 
@@ -65,6 +134,19 @@ describe('base', () => {
         expect(ok).to.be(2);
         expect(hasNames).to.be(true);
 
+    });
+
+    it('trigger with params', () => {
+
+        let base = new Base();
+        let params = ['1', 2, 'some'];
+        let ok = false;
+
+        base.on('some', (...args: Array<any>) => {
+            ok = params.every((param: any, i: number) => param === args[i]);
+        });
+        base.trigger('some', params);
+        expect(ok).to.be(true);
     });
 
     it('trigger whisout add', () => {
@@ -91,17 +173,18 @@ describe('base', () => {
 
     describe('out events', () => {
 
-        it('listenTo', () => {
+        it('listenTo whit params', () => {
 
             let Out = new Base();
             let In = new Base();
             let ok = false;
+            let params = ['1', 2, 'some'];
 
-            In.listenTo(Out, 'some', () => {
-                ok = true;
+            In.listenTo(Out, 'some', (...args: Array<any>) => {
+                ok = params.every((param: any, i: number) => param === args[i]);
             });
 
-            Out.trigger('some');
+            Out.trigger('some', params);
             expect(ok).to.be(true);
 
         });
@@ -111,14 +194,18 @@ describe('base', () => {
             let Out = new Base();
             let In = new Base();
             let ok = 0;
+            let okParams = false;
+            let params = ['1', 2, 'some'];
 
-            In.listenToOnce(Out, 'some', () => {
+            In.listenToOnce(Out, 'some', (...args: Array<any>) => {
                 ok++;
+                okParams = params.every((param: any, i: number) => param === args[i]); 
             });
 
-            Out.trigger('some');
-            Out.trigger('some');
+            Out.trigger('some', params);
+            Out.trigger('some', params);
             expect(ok).to.be(1);
+            expect(okParams).to.be(true);
 
         });
 
@@ -143,46 +230,66 @@ describe('base', () => {
 
     describe('states', () => {
 
-        it('isLoaded', () => {
+        describe('presets', () => {
 
-            let first = null;
-            let second = null;
-            let base = new Base();
+            [
+                {
+                    check: 'isLoaded',
+                    on: 'onLoad',
+                    run: 'loaded'
+                },
+                {
+                    check: 'isReady',
+                    on: 'onReady',
+                    run: 'ready'
+                }
+            ].forEach((testData) => {
 
-            first = base.isLoaded();
-            base.loaded();
-            second = base.isLoaded();
+                it(testData.check, () => {
 
-            expect(first).to.be(false);
-            expect(second).to.be(true);
+                    let first = null;
+                    let second = null;
+                    let base = new Base();
 
-        });
+                    first = base[testData.check]();
+                    base[testData.run]();
+                    second = base[testData.check]();
 
-        it('loaded', () => {
+                    expect(first).to.be(false);
+                    expect(second).to.be(true);
 
-            let base = new Base();
-            let ok = false;
+                });
 
-            base.onLoad(() => {
-                ok = true;
+                it(testData.run, () => {
+
+                    let base = new Base();
+                    let ok = false;
+
+                    base[testData.on](() => {
+                        ok = true;
+                    });
+
+                    base[testData.run]();
+                    expect(ok).to.be(true);
+
+                });
+
+                it(`${testData.run} before callback`, () => {
+
+                    let base = new Base();
+                    let ok = false;
+
+                    base[testData.run]();
+
+                    base[testData.on](() => {
+                        ok = true;
+                    });
+
+                    expect(ok).to.be(true);
+
+                });
+
             });
-
-            base.loaded();
-            expect(ok).to.be(true);
-        });
-
-        it('loaded before callback', () => {
-
-            let base = new Base();
-            let ok = false;
-
-            base.loaded();
-
-            base.onLoad(() => {
-                ok = true;
-            });
-
-            expect(ok).to.be(true);
         });
 
         it('custom', () => {
@@ -212,6 +319,22 @@ describe('base', () => {
             expect(ok).to.be(true);
         });
 
+        it('duble set state', () => {
+
+            let base = new Base();
+            let ok = 0;
+
+            base.setState('some');
+
+            base.onState('some', () => {
+                ok++;
+            });
+
+            base.setState('some');
+
+            expect(ok).to.be(1);
+
+        });
 
     });
 
