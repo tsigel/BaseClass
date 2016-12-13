@@ -16,7 +16,7 @@ export class Base implements IBase {
     public once(eventName: string, handler: IHandler, context?: any): IBase {
         this.checkEventKey('events', eventName);
         let proxyHandler = (...args: Array<any>) => {
-            handler.apply(context || this, Array.prototype.slice.call(args));
+            handler.apply(context || this, args);
             this.off(eventName, proxyHandler);
         };
         this.addEvent('events', eventName, proxyHandler, this);
